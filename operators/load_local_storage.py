@@ -19,5 +19,7 @@ class Load_Local_Storage (get_operator()):
       for item in list:
         add_lip_sync(context, item[0], item[1], item[2], item[3], True)
 
+      context.scene.my_list_index = len(list) - 1
+
     return {'FINISHED'}
   

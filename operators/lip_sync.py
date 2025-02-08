@@ -16,6 +16,13 @@ class Lip_Sync (get_operator()):
   bl_label = "Lip Sync"
 
   def execute(self, context):
+    # 每段话的开始和结束都需要标记，标记的开始的帧数提前 3 帧张嘴，设置成闭合
+    # 标记结束的帧数延迟 3 帧闭嘴，设置成闭合
+    # 每一个文字的前一拍如果不是文字则设置成闭合，是文字则值要比它大
+    # 两个闭合之间如果只有 1 项打开，值给 0.5
+    # 两个闭合之间如果有 2 项打开，值给 0.5 和 0.25
+    # 两个闭合之间如果有 3 项打开，值给 0.33 0.66 0.33
+    # 两个闭合之间如果有 4 项打开，值给 0.25 0.66 0.33
     scene = context.scene
     my_list = scene.my_list
     shape_key_name = scene.shape_key_name

@@ -2,6 +2,7 @@ from .reload_addon import Reload_Addon
 from .set_local_storage import Set_Local_Storage
 from .load_local_storage import Load_Local_Storage
 from .lip_sync import Lip_Sync
+from .set_frame_range import Set_Frame_Range
 from .crud import (
   Add_Sub,
   Clear_Empty_Subs,
@@ -29,6 +30,7 @@ classes = (
   Set_Local_Storage,
   Load_Local_Storage,
   Lip_Sync,
+  Set_Frame_Range
 )
 
 def register():

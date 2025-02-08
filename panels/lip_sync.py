@@ -111,7 +111,10 @@ class Lip_Sync (get_panel()):
     col.operator("my_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("my_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
 
+    add_row_with_label(layout, '开始帧', scene, 'frame_start_', .2)
+    add_row_with_label(layout, '结束帧', scene, 'frame_end_', .2)
     row = layout.row()
+    row.operator("object.set_frame_range", text="更新帧范围")
     row.operator("my_ui.add_open", text="Add Open")
     row.operator("my_ui.add_mid", text="Add Mid")
     row.operator("my_ui.add_close", text="Add Close")

@@ -30,6 +30,8 @@ def add_lip_sync (
     )
     item.int_value = int_value
     item.float_value = get_float_value(enum_value)
+    # 让新增加的被选中
+    scene.my_list_index = l - 1
  
 def copy_lip_sync (context):
   scene = context.scene
@@ -44,7 +46,9 @@ def copy_lip_sync (context):
     item.int_value = source.int_value
     # item.name = source.name
     # 移动到复制对象下方
-    my_list.move(len(my_list) - 1, my_list_index + 1)
+    index = my_list_index + 1
+    my_list.move(len(my_list) - 1, index)
+    scene.my_list_index = index
 
 class Copy_Sub (get_operator()):
   bl_idname = "my_ui.copy"

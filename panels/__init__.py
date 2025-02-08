@@ -27,8 +27,10 @@ def register():
   ])
   add_scene_custom_prop('lip_sync_frame_start', 'Int', 1)
   add_scene_custom_prop('step', 'Int', 3)
-  add_scene_custom_prop('shape_key_name', 'String', 'phone_me_ah')
+  add_scene_custom_prop('shape_key_name', 'String', 'phoneme_ah')
   add_scene_custom_prop('min_frame', 'Int', 3)
+  add_scene_custom_prop('frame_start_', 'Int', 1)
+  add_scene_custom_prop('frame_end_', 'Int', 250)
 
 def unregister():
   unregister_classes(classes)
