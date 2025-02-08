@@ -17,7 +17,7 @@ class Load_Local_Storage (get_operator()):
       list = json.loads(text.as_string())
 
       for item in list:
-        add_lip_sync(context, item[0], item[1], item[2], True)
+        add_lip_sync(context, item[0], item[1], item[2], item[3], True)
 
     return {'FINISHED'}
   

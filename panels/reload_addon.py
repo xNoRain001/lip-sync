@@ -5,8 +5,8 @@ class Reload_Addon(get_panel()):
   bl_region_type = 'UI'
   bl_category = 'Item'
   bl_label = "Reload Addon"
-  bl_idname = "_PT_Reload_Addon_PT_"
-
+  bl_idname = "OBJECT_PT_Reload_Addon"
+  
   def draw(self, context):
     layout = self.layout
     add_row_with_operator(layout, 'object.reload_addon', 'Reload Addon')

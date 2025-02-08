@@ -9,6 +9,7 @@ def add_lip_sync (
   int_value = None, 
   enum_value = 'open', 
   float_value = None,
+  name = '',
   load = False
 ):
   scene = context.scene
@@ -16,36 +17,54 @@ def add_lip_sync (
   my_list = scene.my_list
   item = my_list.add()
   item.enum_value = enum_value
+  item.name = name
 
   if load:
     item.int_value = int_value
     item.float_value = float_value
   else:
     # 当原先本来就有数据时，起始帧在原先的基础上加上间隔
-    int_value = my_list[-2].int_value + step if len(my_list) > 1 else 0
+    l = len(my_list)
+    int_value = (
+      my_list[-2].int_value + step if l > 1 else scene.lip_sync_frame_start
+    )
     item.int_value = int_value
     item.float_value = get_float_value(enum_value)
+ 
+def copy_lip_sync (context):
+  scene = context.scene
+  my_list = scene.my_list
+  my_list_index = scene.my_list_index
+  
+  if my_list_index > -1:
+    item = my_list.add()
+    source = my_list[my_list_index]
+    item.float_value = source.float_value
+    item.enum_value = source.enum_value
+    item.int_value = source.int_value
+    # item.name = source.name
+    # 移动到复制对象下方
+    my_list.move(len(my_list) - 1, my_list_index + 1)
 
-class MYUI_OT_AddRows(get_operator()):
-  bl_idname = "my_ui.add_rows"
-  bl_label = "Add 10 Rows"
+class Copy_Sub (get_operator()):
+  bl_idname = "my_ui.copy"
+  bl_label = "Copy"
 
   def execute(self, context):
-    for _ in range(10):
-      add_lip_sync(context)
+    copy_lip_sync(context)
 
     return {'FINISHED'}
-  
-class Add_Open (get_operator()):
+
+class Add_Open_Sub (get_operator()):
   bl_idname = "my_ui.add_open"
   bl_label = "Add Open"
 
   def execute(self, context):
-    add_lip_sync(context,  enum_value = 'open')
+    add_lip_sync(context, enum_value = 'open')
 
     return {'FINISHED'}
   
-class Add_Mid (get_operator()):
+class Add_Mid_Sub (get_operator()):
   bl_idname = "my_ui.add_mid"
   bl_label = "Add Mid"
 
@@ -54,7 +73,7 @@ class Add_Mid (get_operator()):
 
     return {'FINISHED'}
   
-class Add_Close (get_operator()):
+class Add_Close_Sub (get_operator()):
   bl_idname = "my_ui.add_close"
   bl_label = "Add Close"
 
@@ -63,7 +82,7 @@ class Add_Close (get_operator()):
 
     return {'FINISHED'}
 
-class MYUI_OT_ClearRows(get_operator()):
+class Clear_Subs (get_operator()):
   bl_idname = "my_ui.clear_rows"
   bl_label = "Clear Rows"
 
@@ -74,7 +93,7 @@ class MYUI_OT_ClearRows(get_operator()):
 
     return {'FINISHED'}
   
-class MYUI_OT_ClearEmptyRows(get_operator()):
+class Clear_Empty_Subs (get_operator()):
   bl_idname = "my_ui.clear_empty_rows"
   bl_label = "Clear Empty Rows"
 
@@ -84,8 +103,7 @@ class MYUI_OT_ClearEmptyRows(get_operator()):
 
     return {'FINISHED'}
   
-# 定义操作来添加、删除和移动列表项
-class MY_OT_new_item(get_operator()):
+class Add_Sub (get_operator()):
   bl_idname = "my_list.new_item"
   bl_label = "Add a new item"
 
@@ -94,34 +112,34 @@ class MY_OT_new_item(get_operator()):
 
     return {'FINISHED'}
 
-class MY_OT_delete_item(get_operator()):
-    bl_idname = "my_list.delete_item"
-    bl_label = "Delete an item"
+class Delete_Sub (get_operator()):
+  bl_idname = "my_list.delete_item"
+  bl_label = "Delete an item"
 
-    def execute(self, context):
-        scene = context.scene
-        my_list = scene.my_list
-        index = scene.my_list_index
+  def execute(self, context):
+    scene = context.scene
+    my_list = scene.my_list
+    index = scene.my_list_index
 
-        my_list.remove(index)
-        scene.my_list_index = min(max(0, index - 1), len(my_list) - 1)
-        return {'FINISHED'}
+    my_list.remove(index)
+    scene.my_list_index = min(max(0, index - 1), len(my_list) - 1)
+    return {'FINISHED'}
 
-class MY_OT_move_item(get_operator()):
-    bl_idname = "my_list.move_item"
-    bl_label = "Move an item"
-    direction: get_props().EnumProperty(items=(('UP', "Up", ""), ('DOWN', "Down", "")))
+class Move_Sub (get_operator()):
+  bl_idname = "my_list.move_item"
+  bl_label = "Move an item"
+  direction: get_props().EnumProperty(items=(('UP', "Up", ""), ('DOWN', "Down", "")))
 
-    def execute(self, context):
-        scene = context.scene
-        my_list = scene.my_list
-        index = scene.my_list_index
+  def execute(self, context):
+    scene = context.scene
+    my_list = scene.my_list
+    index = scene.my_list_index
 
-        if self.direction == 'UP' and index > 0:
-            my_list.move(index, index - 1)
-            scene.my_list_index -= 1
-        elif self.direction == 'DOWN' and index < len(my_list) - 1:
-            my_list.move(index, index + 1)
-            scene.my_list_index += 1
+    if self.direction == 'UP' and index > 0:
+        my_list.move(index, index - 1)
+        scene.my_list_index -= 1
+    elif self.direction == 'DOWN' and index < len(my_list) - 1:
+        my_list.move(index, index + 1)
+        scene.my_list_index += 1
 
-        return {'FINISHED'}
+    return {'FINISHED'}

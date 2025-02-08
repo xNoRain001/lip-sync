@@ -2,7 +2,7 @@ import sys
 from ..libs.blender_utils import get_operator, get_ops
 
 # Debug
-class Reload_Addon(get_operator()):
+class Reload_Addon (get_operator()):
   bl_idname = "object.reload_addon"
   bl_label = "Reload Addon"
 

@@ -12,7 +12,7 @@ class Set_Local_Storage (get_operator()):
     l = []
     
     for item in my_list:
-      l.append([item.int_value, item.enum_value, item.float_value])
+      l.append([item.int_value, item.enum_value, item.float_value, item.name])
 
     text_name = lip_sync_text_name
     texts = get_data().texts
