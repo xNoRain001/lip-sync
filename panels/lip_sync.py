@@ -44,15 +44,13 @@ class Lip_Sync_Sub (get_ui_list()):
     active_propname,
     index
   ):
+    common = { 'text': '', 'emboss': False }
     row = layout.row()
-    row.prop(item, "frame", text="", emboss=False)
-    # Enum dropdown
-    # 这有这样才会在里面显示复选框
-    # emboss=False 复选框就看不见了
-    row.prop(item, "open", text="")
-    row.label(text=str(item.open))
-    row.prop(item, "shape_key_value", text="", emboss=False)
-    row.prop(item, "text", text="", emboss=False)
+    row.prop(item, "frame", **common)
+    # 开启 emboss 会导致复选框就看不见了
+    row.prop(item, "open", text = '打开' if item.open else '闭合')
+    row.prop(item, "shape_key_value", **common)
+    row.prop(item, "text", **common)
 
 class Lip_Sync_Config (get_panel()):
   bl_label = "Lip Sync Config"
@@ -66,11 +64,11 @@ class Lip_Sync_Config (get_panel()):
     scene = context.scene
 
     # add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
-    add_row_with_label(layout, '间隔', scene, 'step', .2)
+    add_row_with_label(layout, '节拍', scene, 'step', .2)
     add_row_with_label(layout, '形态键', scene, 'lip_sync_shape_key', .2)
     # TODO: 下拉框选择形态键
-    add_row_with_label(layout, '音素', scene, 'shape_key_name', .2)
-    add_row_with_label(layout, '打开时的默认值', scene, 'lip_sync_shape_key_value', .2)
+    add_row_with_label(layout, '音素形态键', scene, 'shape_key_name', .2)
+    add_row_with_label(layout, '打开默认值', scene, 'lip_sync_shape_key_value', .2)
     add_row_with_label(layout, '插值', scene, 'interpolation', .2)
     add_row_with_label(layout, '闭口间隔', scene, 'min_frame', .2)
     add_row_with_label(layout, '智能模式', scene, 'smart_mode', .2)
@@ -109,9 +107,9 @@ class Lip_Sync (get_panel()):
     layout = self.layout
     scene = context.scene
 
-    row = layout.row()
-    row.operator("object.set_local_storage", text="Local Storagge")
-    row.operator("object.load_local_storage", text="Load Local Storagge")
+    # row = layout.row()
+    # row.operator("object.set_local_storage", text="Local Storagge")
+    # row.operator("object.load_local_storage", text="Load Local Storagge")
 
     # row = layout.row()
     # row.label(text="帧")
@@ -127,10 +125,13 @@ class Lip_Sync (get_panel()):
     row.template_list("OBJECT_UL_Lip_Sync_Sub", "lip_sync_list", scene, "lip_sync_list", scene, "lip_sync_list_index")
        
     col = row.column()
-    # col.operator("lip_sync_list.new_item", icon='ADD', text="")
-    # col.operator("lip_sync_list.delete_item", icon='REMOVE', text="")
+    # col.operator("object.add_open", icon='ADD', text="")
+    # col.operator("object.add_open", icon='REMOVE', text="")
     col.operator("lip_sync_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("lip_sync_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
+    col.operator("object.clear_rows", icon='TRASH', text="")
+    col.operator("object.set_local_storage", icon='FILE_TICK', text="")
+    col.operator("object.load_local_storage", icon='IMPORT', text="")
     
     row = layout.row()
     row.operator("object.add_open", text="Add Open", icon = 'ADD')
@@ -138,5 +139,3 @@ class Lip_Sync (get_panel()):
     row.operator("object.copy", text="Copy", icon = 'DUPLICATE')
     row.operator("lip_sync_list.delete_item", text="删除", icon = 'X')
     layout.operator("object.lip_sync", text="Lip Sync")
-    # layout.operator("object.clear_empty_rows", text="Clear Empty Rows")
-    layout.operator("object.clear_rows", text="Clear")

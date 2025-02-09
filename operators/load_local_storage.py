@@ -12,17 +12,9 @@ def load_lip_sync (context, lip_sync_data):
 
   for lip_sync_item in lip_sync_data:
     item = lip_sync_list.add()
+
     for prop in custom_props:
-      if prop == 'text':
-        setattr(item, prop, lip_sync_item['name'])
-      if prop == 'frame':
-        setattr(item, prop, lip_sync_item['int_value'])
-      if prop == 'open':
-        v = True if lip_sync_item['enum_value'] == 'open' else False
-        setattr(item, prop, v)
-        # setattr(item, prop, lip_sync_item['enum_value'])
-      if prop == 'shape_key_value':
-        setattr(item, prop, lip_sync_item['float_value'])
+      setattr(item, prop, lip_sync_item[prop])
       
     scene.lip_sync_list_index = len(lip_sync_data) - 1
 

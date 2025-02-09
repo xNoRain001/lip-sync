@@ -62,7 +62,6 @@ def before (self, lip_sync_list):
   return passing
 
 def one (lip_sync_list, start_index, end_index):
-  print(start_index)
   lip_sync_list[start_index].shape_key_value = 0.5
 
 def two (lip_sync_list, start_index, end_index):

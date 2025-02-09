@@ -1,7 +1,8 @@
 from ..panels.lip_sync import get_shape_key_value
 from ..libs.blender_utils import (
   get_operator,
-  get_props
+  get_props,
+  report_info
 )
 
 def add_lip_sync (
@@ -18,7 +19,6 @@ def add_lip_sync (
   item = lip_sync_list.add()
   l = len(lip_sync_list)
   frame = lip_sync_list[-2].frame + step if l > 1 else lip_sync_frame_start
-  # TODO: delete
   item.open = open
   item.text = text
   # 当原先本来就有数据时，起始帧在原先的基础上加上间隔
@@ -73,15 +73,19 @@ class Add_Close_Sub (get_operator()):
 
 class Clear_Subs (get_operator()):
   bl_idname = "object.clear_rows"
-  bl_label = "Clear Rows"
+  bl_label = "清除所有项？"
 
   def execute(self, context):
     scene = context.scene
     lip_sync_list = scene.lip_sync_list
     lip_sync_list.clear()
+    report_info(self, "已删除所有项")
 
     return {'FINISHED'}
   
+  def invoke(self, context, event):
+    return context.window_manager.invoke_confirm(self, event)
+
 class Clear_Empty_Subs (get_operator()):
   bl_idname = "object.clear_empty_rows"
   bl_label = "Clear Empty Rows"
