@@ -83,8 +83,8 @@ class Blink (get_panel()):
     scene = context.scene
 
     row = layout.row()
-    # row.operator("my_ui.set_local_storage", text="Local Storagge")
-    # row.operator("my_ui.load_local_storage", text="Load Local Storagge")
+    # row.operator("object.set_local_storage", text="Local Storagge")
+    # row.operator("object.load_local_storage", text="Load Local Storagge")
 
     row = layout.row()
     row.label(text="出现")
@@ -97,19 +97,17 @@ class Blink (get_panel()):
     row.template_list("OBJECT_UL_Blink_Sub", "blink_list", scene, "blink_list", scene, "blink_list_index")
        
     col = row.column()
-    col.operator("object.add_blink_sub", icon='ADD', text="")
-    col.operator("object.delete_blink_sub", icon='REMOVE', text="")
     col.separator()
     col.operator("object.move_blink_sub", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("object.move_blink_sub", icon='TRIA_DOWN', text="").direction = 'DOWN'
   
     row = layout.row()
-    row.operator("object.add_blink_sub", text="Add Blink Sub")
-    row.operator("object.copy_blink_sub", text="Copy Blink Sub")
-
-    # layout.operator("my_ui.add_row", text="Add Row")
+    row.operator("object.add_blink_sub", text="Add Blink Sub", icon = 'ADD')
+    row.operator("object.delete_blink_sub", text="删除", icon = 'X')
+    row.operator("object.copy_blink_sub", text="Copy Blink Sub", icon = 'DUPLICATE')
+    # layout.operator("object.add_row", text="Add Row")
     # Add 10 rows button
     layout.operator("object.blink", text="Blink")
     # Clear empty rows button
-    # layout.operator("my_ui.clear_empty_rows", text="Clear Empty Rows")
+    # layout.operator("object.clear_empty_rows", text="Clear Empty Rows")
     layout.operator("object.clear_blink_subs", text="Clear Blink Subs")

@@ -34,8 +34,8 @@ def register():
   register_classes(classes)
 
   # lip sync props
-  add_scene_custom_prop('my_list', 'Collection', type = Lip_Sync_Sub_Vars)
-  add_scene_custom_prop('my_list_index', 'Int')
+  add_scene_custom_prop('lip_sync_list', 'Collection', type = Lip_Sync_Sub_Vars)
+  add_scene_custom_prop('lip_sync_list_index', 'Int')
   add_scene_custom_prop('interpolation', 'Enum', 'BEZIER', items = [
     # 标识符（Identifier）：用于在代码中引用该枚举项的字符串。
     # 名称（Name）：在用户界面中显示的字符串。
@@ -64,7 +64,14 @@ def register():
   add_scene_custom_prop('type_4_shape_key_value_2', 'Float', 0.66)
   add_scene_custom_prop('type_4_shape_key_value_3', 'Float', 1)
   add_scene_custom_prop('type_4_shape_key_value_4', 'Float', 0.5)
+  add_scene_custom_prop('type_5_shape_key_value', 'Float', 0.33)
+  add_scene_custom_prop('type_5_shape_key_value_2', 'Float', 0.66)
+  add_scene_custom_prop('type_5_shape_key_value_3', 'Float', 1)
+  add_scene_custom_prop('type_5_shape_key_value_4', 'Float', 0.66)
+  add_scene_custom_prop('type_5_shape_key_value_5', 'Float', 0.33)
   add_scene_custom_prop('smart_mode', 'Bool', False)
+  add_scene_custom_prop('lip_sync_shape_key_value', 'Float', 0.5)
+  add_scene_custom_prop('lip_sync_shape_key', 'String', 'Key')
 
   # blink props
   add_scene_custom_prop('blink_list', 'Collection', type = Blink_Sub_Var)
@@ -82,8 +89,8 @@ def register():
 
 def unregister():
   unregister_classes(classes)
-  remove_scene_custom_prop('my_list')
-  remove_scene_custom_prop('my_list_index')
+  remove_scene_custom_prop('lip_sync_list')
+  remove_scene_custom_prop('lip_sync_list_index')
   remove_scene_custom_prop('interpolation')
   remove_scene_custom_prop('lip_sync_frame_start')
   remove_scene_custom_prop('step')

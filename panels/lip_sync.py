@@ -12,30 +12,22 @@ from ..libs.blender_utils import (
   get_ui_list
 )
 
-def get_float_value (enum_value):
-  float_value = 0 if enum_value == 'close' else 1
+def get_shape_key_value (open, lip_sync_shape_key_value):
+  shape_key_value = lip_sync_shape_key_value if open else 0
 
-  return float_value
+  return shape_key_value
 
 # 两次选中同一项也会触发
 def on_update(self, context):
-  self.float_value = get_float_value(self.enum_value)
+  self.shape_key_value = get_shape_key_value(self.open, context.scene.lip_sync_shape_key_value)
   
 # 定义一个自定义属性组
 class Lip_Sync_Sub_Vars (get_property_group()):
   # 用于占位，其他属性有控件，不好进行选择
-  name: get_props().StringProperty(name="Name")
-  int_value: get_props().IntProperty(name="Int Value")
-  enum_value: get_props().EnumProperty(
-    name="Enum Value",
-    items=[
-      ('open', "Open", ""),
-      ('close', "Close", "")
-    ],
-    default='open',
-    update=on_update
-  )
-  float_value: get_props().FloatProperty(name="Float Value", min=0.0, max=1.0)
+  text: get_props().StringProperty(name="text")
+  frame: get_props().IntProperty(name="frame")
+  open: get_props().BoolProperty(name="open", update=on_update, default = True)
+  shape_key_value: get_props().FloatProperty(name="shape_key_value", min=0.0, max=1.0)
 
 class Lip_Sync_Sub (get_ui_list()):
   bl_label = "Lip Sync Sub"
@@ -53,11 +45,14 @@ class Lip_Sync_Sub (get_ui_list()):
     index
   ):
     row = layout.row()
-    row.prop(item, "int_value", text="", emboss=False)
+    row.prop(item, "frame", text="", emboss=False)
     # Enum dropdown
-    row.prop(item, "enum_value", text="", emboss=False)
-    row.prop(item, "float_value", text="", emboss=False)
-    row.prop(item, "name", text="", emboss=False)
+    # 这有这样才会在里面显示复选框
+    # emboss=False 复选框就看不见了
+    row.prop(item, "open", text="")
+    row.label(text=str(item.open))
+    row.prop(item, "shape_key_value", text="", emboss=False)
+    row.prop(item, "text", text="", emboss=False)
 
 class Lip_Sync_Config (get_panel()):
   bl_label = "Lip Sync Config"
@@ -72,8 +67,10 @@ class Lip_Sync_Config (get_panel()):
 
     # add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
     add_row_with_label(layout, '间隔', scene, 'step', .2)
+    add_row_with_label(layout, '形态键', scene, 'lip_sync_shape_key', .2)
     # TODO: 下拉框选择形态键
     add_row_with_label(layout, '音素', scene, 'shape_key_name', .2)
+    add_row_with_label(layout, '打开时的默认值', scene, 'lip_sync_shape_key_value', .2)
     add_row_with_label(layout, '插值', scene, 'interpolation', .2)
     add_row_with_label(layout, '闭口间隔', scene, 'min_frame', .2)
     add_row_with_label(layout, '智能模式', scene, 'smart_mode', .2)
@@ -93,6 +90,13 @@ class Lip_Sync_Config (get_panel()):
     row.prop(scene, "type_4_shape_key_value_2", text = '')
     row.prop(scene, "type_4_shape_key_value_3", text = '')
     row.prop(scene, "type_4_shape_key_value_4", text = '')
+    row = layout.row()
+    row.label(text = '打开五次')
+    row.prop(scene, "type_5_shape_key_value", text = '')
+    row.prop(scene, "type_5_shape_key_value_2", text = '')
+    row.prop(scene, "type_5_shape_key_value_3", text = '')
+    row.prop(scene, "type_5_shape_key_value_4", text = '')
+    row.prop(scene, "type_5_shape_key_value_5", text = '')
   
 class Lip_Sync (get_panel()):
   bl_label = "Lip Sync"
@@ -106,34 +110,33 @@ class Lip_Sync (get_panel()):
     scene = context.scene
 
     row = layout.row()
-    row.operator("my_ui.set_local_storage", text="Local Storagge")
-    row.operator("my_ui.load_local_storage", text="Load Local Storagge")
+    row.operator("object.set_local_storage", text="Local Storagge")
+    row.operator("object.load_local_storage", text="Load Local Storagge")
 
     # row = layout.row()
     # row.label(text="帧")
     # row.label(text="状态")
     # row.label(text="形态键值")
     # row.label(text="文本")
-
     row = layout.row()
     row.prop(scene, "frame_start_", text = '起始')
     row.prop(scene, "frame_end_", text = '结束')
     row.operator("object.set_frame_range", text="更新帧范围")
 
     row = layout.row()
-    row.template_list("OBJECT_UL_Lip_Sync_Sub", "my_list", scene, "my_list", scene, "my_list_index")
+    row.template_list("OBJECT_UL_Lip_Sync_Sub", "lip_sync_list", scene, "lip_sync_list", scene, "lip_sync_list_index")
        
     col = row.column()
-    # col.operator("my_list.new_item", icon='ADD', text="")
-    # col.operator("my_list.delete_item", icon='REMOVE', text="")
-    col.operator("my_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
-    col.operator("my_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
+    # col.operator("lip_sync_list.new_item", icon='ADD', text="")
+    # col.operator("lip_sync_list.delete_item", icon='REMOVE', text="")
+    col.operator("lip_sync_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
+    col.operator("lip_sync_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
     
     row = layout.row()
-    row.operator("my_ui.add_open", text="Add Open", icon = 'ADD')
-    row.operator("my_ui.add_close", text="Add Close", icon = 'ADD')
-    row.operator("my_ui.copy", text="Copy", icon = 'DUPLICATE')
-    row.operator("my_list.delete_item", text="删除", icon = 'X')
-    layout.operator("my_ui.lip_sync", text="Lip Sync")
-    # layout.operator("my_ui.clear_empty_rows", text="Clear Empty Rows")
-    layout.operator("my_ui.clear_rows", text="Clear")
+    row.operator("object.add_open", text="Add Open", icon = 'ADD')
+    row.operator("object.add_close", text="Add Close", icon = 'ADD')
+    row.operator("object.copy", text="Copy", icon = 'DUPLICATE')
+    row.operator("lip_sync_list.delete_item", text="删除", icon = 'X')
+    layout.operator("object.lip_sync", text="Lip Sync")
+    # layout.operator("object.clear_empty_rows", text="Clear Empty Rows")
+    layout.operator("object.clear_rows", text="Clear")

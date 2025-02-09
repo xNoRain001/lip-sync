@@ -1,8 +1,8 @@
 from ..libs.blender_utils import  get_data, get_operator, get_object_, get_shape_keys, get_context
 
-def set_constant (index_list, a, shape_key_name, interpolation, my_list):
+def set_constant (close_index_list, _shape_keys, shape_key_name, interpolation):
   # 获取形态键的动画数据
-  fcurves = a.animation_data.action.fcurves
+  fcurves = _shape_keys.animation_data.action.fcurves
 
   # 查找与指定形态键相关的关键帧曲线
   for fcurve in fcurves:
@@ -12,30 +12,31 @@ def set_constant (index_list, a, shape_key_name, interpolation, my_list):
       for keyframe_point in keyframe_points:
         keyframe_point.interpolation = interpolation
 
-      for i in index_list:
-        keyframe_points[i].interpolation = 'CONSTANT'
-        keyframe_points[i + 1].interpolation = interpolation
+      for close_index in close_index_list:
+        keyframe_points[close_index].interpolation = 'CONSTANT'
 
       break
 
-def get_index_list (my_list):
+# 获取每段话结束时的 close 在 lip sync list 中的索引，这些 close 插值需要设置成
+# CONSTANT
+def get_close_index_list (lip_sync_list, min_frame):
   index_list = []
-  last_index = len(my_list) - 1
+  last_index = len(lip_sync_list) - 1
 
-  for index, item in enumerate(my_list):
-    frame = item.int_value
-    enum_value = item.enum_value
+  for index, item in enumerate(lip_sync_list):
+    frame = item.frame
+    open = item.open
 
     if (
-      enum_value == 'close' and 
+      not open and 
       index < last_index and 
-      my_list[index + 1].int_value - frame > 3
+      lip_sync_list[index + 1].frame - frame > min_frame
     ):
       index_list.append(index)
 
   return index_list
 
-def before (self, my_list):
+def before (self, lip_sync_list):
   def get_repeat_frame (list):
     seen = set()
     duplicates = set()
@@ -48,49 +49,47 @@ def before (self, my_list):
 
     return duplicates
 
-  list = [item.int_value for item in my_list]
+  list = [item.frame for item in lip_sync_list]
   duplicates = get_repeat_frame(list)
   passing = True
-
-  # TODO: 闭合时，值一定要为0x
-  # 这里根据类型选择，可能出现类型为 close，float_value 不为 0 的情况
-  # 根据 float_value 进行选择
   
   if len(duplicates):
     passing = False
     self.report({'WARNING'}, f'存在重复的帧{ str(duplicates) }')
 
+  # TODO: 严格模式，闭合时，值一定要为 0，打开时，值一定不为 0
+
   return passing
 
-def one (my_list, start_index, end_index):
+def one (lip_sync_list, start_index, end_index):
   print(start_index)
-  my_list[start_index].float_value = 0.5
+  lip_sync_list[start_index].shape_key_value = 0.5
 
-def two (my_list, start_index, end_index):
-  res = my_list[start_index:end_index + 1]
-  res[0].float_value = 0.5
-  res[1].float_value = 0.25
+def two (lip_sync_list, start_index, end_index):
+  res = lip_sync_list[start_index:end_index + 1]
+  res[0].shape_key_value = 0.5
+  res[1].shape_key_value = 0.25
 
-def three (my_list, start_index, end_index):
-  res = my_list[start_index:end_index + 1]
-  res[0].float_value = 0.33
-  res[1].float_value = 0.66
-  res[2].float_value = 0.33
+def three (lip_sync_list, start_index, end_index):
+  res = lip_sync_list[start_index:end_index + 1]
+  res[0].shape_key_value = 0.33
+  res[1].shape_key_value = 0.66
+  res[2].shape_key_value = 0.33
 
-def four (my_list, start_index, end_index):
-  res = my_list[start_index:end_index + 1]
-  res[0].float_value = 0.33
-  res[1].float_value = 0.66
-  res[2].float_value = 1
-  res[3].float_value = 0.5
+def four (lip_sync_list, start_index, end_index):
+  res = lip_sync_list[start_index:end_index + 1]
+  res[0].shape_key_value = 0.33
+  res[1].shape_key_value = 0.66
+  res[2].shape_key_value = 1
+  res[3].shape_key_value = 0.5
 
-def five (my_list, start_index, end_index):
-  res = my_list[start_index:end_index + 1]
-  res[0].float_value = 0.33
-  res[1].float_value = 0.66
-  res[2].float_value = 1
-  res[3].float_value = 0.66
-  res[4].float_value = 0.33
+def five (lip_sync_list, start_index, end_index):
+  res = lip_sync_list[start_index:end_index + 1]
+  res[0].shape_key_value = 0.33
+  res[1].shape_key_value = 0.66
+  res[2].shape_key_value = 1
+  res[3].shape_key_value = 0.66
+  res[4].shape_key_value = 0.33
 
 strategies = {
   1: one,
@@ -100,55 +99,68 @@ strategies = {
   5: five
 }
 
-def smart_v (my_list):
-  # 每段话的开始和结束都需要标记，标记的开始的帧数提前 3 帧张嘴，设置成闭合
-  # 标记结束的帧数延迟 3 帧闭嘴，设置成闭合
+def smart_shape_key_value (lip_sync_list):
+  # TODO: 每段话提前 3 帧张嘴，延迟 3 帧闭嘴
   open_list = []
-  last_index = len(my_list) - 1
+  last_index = len(lip_sync_list) - 1
 
+  # 获取所有连续的 open，将每一段连续的 open 的开始索引和结束索引保持起来
   index = 0
   while index <= last_index:
-    item = my_list[index]
-    is_open = item.enum_value == 'open'
+    item = lip_sync_list[index]
+    is_open = item.open
 
+    # 跳过所有 close
     if not is_open:
       index += 1
       continue
 
+    # 处理最开始就是 open 状态的情况
     if index == 0:
       end_index = 0
 
-      for i, item in enumerate(my_list):
-        if item.enum_value == 'close':
+      # 找到最近的一个 close，如果找不到说明全部都是 open，那么 open_list 将是空列表
+      for i, item in enumerate(lip_sync_list):
+        if not item.open:
           end_index = i
           open_list.append([index, i - 1])
+
           break
 
+      # 跳过最近的一个 close 之前的所有项和最近的 close 自身
       index += (end_index + 1)
       continue
 
+    # 处理最后依然是 open 的情况（正常情况应该要为 close）
     if index == last_index:
+      # 获取最后一段连续的 open
       last_open_item = open_list[len(open_list) - 1]
 
       if len(last_open_item) == 1:
+        # 有开始索引，说明开始索引的位置到最后一项都是 open，就将最后一项作为
+        # 结束索引，如果数量少，也能自动分配数值
+        # ... close oepn open
+        # ... close oepn open open
         last_open_item.append(index)
       else:
+        #  正好以 open 结尾，并且 open 的前一项是 close，那么就是数量为 1 的片段
+        # ... close oepn
         last_open_item.append([index, index])
       
       index += 1
       continue
 
-    prev = my_list[index - 1]
-    next = my_list[index + 1]
-    prev_is_open = prev.enum_value == 'open'
-    prev_is_close = prev.enum_value == 'close'
-    next_is_open = next.enum_value == 'open'
-    next_is_close = next.enum_value == 'close'
+    prev = lip_sync_list[index - 1]
+    next = lip_sync_list[index + 1]
+    prev_is_open = prev.open == True
+    prev_is_close = prev.open == False
+    next_is_open = next.open == True
+    next_is_close = next.open == False
 
     if prev_is_close and next_is_close:
       # 前一项是闭合，后一项闭合，唯一的打开
       open_list.append([index, index])
-      # 下一项一定是闭合，直接跳过
+      # 后一项一定是闭合，直接跳过这两项
       index += 2
     elif prev_is_close and next_is_open:
       # 前一项是闭合，后一项打开，打开的开始索引
@@ -164,43 +176,46 @@ def smart_v (my_list):
 
   for open_item in open_list:
     start_index, end_index = open_item
-    number = end_index - start_index + 1
+    open_numbers = end_index - start_index + 1
 
-    if number in strategies:
-      strategies[number](my_list, start_index, end_index)
+    if open_numbers in strategies:
+      strategies[open_numbers](lip_sync_list, start_index, end_index)
 
+# TODO: 移动到 utils 中
 def shape_key_keyframe_insert (shape_key, frame, value):
   shape_key.value = value
   shape_key.keyframe_insert(data_path = "value", frame = frame)
 
-def keyframe_insert (my_list, shape_key):
-  for item in my_list:
-    frame = item.int_value
-    value = item.float_value
+def keyframe_insert (lip_sync_list, shape_key):
+  for item in lip_sync_list:
+    frame = item.frame
+    value = item.shape_key_value
     shape_key_keyframe_insert(shape_key, frame, value)
 
 class Lip_Sync (get_operator()):
-  bl_idname = "my_ui.lip_sync"
+  bl_idname = "object.lip_sync"
   bl_label = "Lip Sync"
 
   def execute(self, context):
     scene = context.scene
-    my_list = scene.my_list
+    lip_sync_list = scene.lip_sync_list
     shape_key_name = scene.shape_key_name
-    shape_keys = get_shape_keys('Key')
+    lip_sync_shape_key = scene.lip_sync_shape_key
+    shape_keys = get_shape_keys(lip_sync_shape_key)
     shape_key = shape_keys[shape_key_name]
     smart_mode = scene.smart_mode
+    min_frame = scene.min_frame
     interpolation = scene.interpolation
-    passing = before(self, my_list)
+    passing = before(self, lip_sync_list)
 
     if passing:
       if smart_mode:
-        smart_v(my_list)
+        smart_shape_key_value(lip_sync_list)
       
-      keyframe_insert(my_list, shape_key)
+      keyframe_insert(lip_sync_list, shape_key)
 
-      a = get_data().shape_keys.get('Key')
-      index_list = get_index_list(my_list)
-      set_constant(index_list, a, shape_key_name, interpolation, my_list)
+      _shape_keys = get_data().shape_keys.get('Key')
+      close_index_list = get_close_index_list(lip_sync_list, min_frame)
+      set_constant(close_index_list, _shape_keys, shape_key_name, interpolation)
 
     return {'FINISHED'}

@@ -1,4 +1,4 @@
-from ..panels.lip_sync import get_float_value
+from ..panels.lip_sync import get_shape_key_value
 from ..libs.blender_utils import (
   get_operator,
   get_props

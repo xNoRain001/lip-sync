@@ -13,7 +13,6 @@ from .blink_curd import (
   Move_Blink_Sub
 )
 from .lip_sync_crud import (
-  Add_Sub,
   Clear_Empty_Subs,
   Clear_Subs,
   Move_Sub,
@@ -26,7 +25,6 @@ from ..libs.blender_utils import register_classes, unregister_classes
 
 classes = (
   Reload_Addon,
-  Add_Sub,
   Clear_Empty_Subs,
   Clear_Subs,
   Move_Sub,
