@@ -16,6 +16,8 @@ def add_lip_sync (
   step = scene.step
   my_list = scene.my_list
   item = my_list.add()
+  # TODO: delete
+  enum_value = 'open' if enum_value == 'mid' else enum_value
   item.enum_value = enum_value
   item.name = name
 
@@ -65,15 +67,6 @@ class Add_Open_Sub (get_operator()):
 
   def execute(self, context):
     add_lip_sync(context, enum_value = 'open')
-
-    return {'FINISHED'}
-  
-class Add_Mid_Sub (get_operator()):
-  bl_idname = "my_ui.add_mid"
-  bl_label = "Add Mid"
-
-  def execute(self, context):
-    add_lip_sync(context, enum_value = 'mid')
 
     return {'FINISHED'}
   

@@ -13,13 +13,7 @@ from ..libs.blender_utils import (
 )
 
 def get_float_value (enum_value):
-  # mid
-  float_value = 0.5
-
-  if enum_value == 'open':
-    float_value = 1
-  elif enum_value == 'close':
-    float_value = 0
+  float_value = 0 if enum_value == 'close' else 1
 
   return float_value
 
@@ -36,7 +30,6 @@ class Lip_Sync_Sub_Vars (get_property_group()):
     name="Enum Value",
     items=[
       ('open', "Open", ""),
-      ('mid', "Mid", ""),
       ('close', "Close", "")
     ],
     default='open',
@@ -77,13 +70,30 @@ class Lip_Sync_Config (get_panel()):
     layout = self.layout
     scene = context.scene
 
-    add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
+    # add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
     add_row_with_label(layout, '间隔', scene, 'step', .2)
     # TODO: 下拉框选择形态键
     add_row_with_label(layout, '音素', scene, 'shape_key_name', .2)
     add_row_with_label(layout, '插值', scene, 'interpolation', .2)
     add_row_with_label(layout, '闭口间隔', scene, 'min_frame', .2)
-
+    add_row_with_label(layout, '智能模式', scene, 'smart_mode', .2)
+    add_row_with_label(layout, '打开一次', scene, 'type_1_shape_key_value', .2)
+    row = layout.row()
+    row.label(text = '打开两次')
+    row.prop(scene, "type_2_shape_key_value", text = '')
+    row.prop(scene, "type_2_shape_key_value_2", text = '')
+    row = layout.row()
+    row.label(text = '打开三次')
+    row.prop(scene, "type_3_shape_key_value", text = '')
+    row.prop(scene, "type_3_shape_key_value_2", text = '')
+    row.prop(scene, "type_3_shape_key_value_3", text = '')
+    row = layout.row()
+    row.label(text = '打开四次')
+    row.prop(scene, "type_4_shape_key_value", text = '')
+    row.prop(scene, "type_4_shape_key_value_2", text = '')
+    row.prop(scene, "type_4_shape_key_value_3", text = '')
+    row.prop(scene, "type_4_shape_key_value_4", text = '')
+  
 class Lip_Sync (get_panel()):
   bl_label = "Lip Sync"
   bl_idname = "OBJECT_PT_Lip_Sync"
@@ -96,35 +106,34 @@ class Lip_Sync (get_panel()):
     scene = context.scene
 
     row = layout.row()
-    row.label(text="帧")
-    row.label(text="状态")
-    row.label(text="形态键值")
-    row.label(text="文本")
+    row.operator("my_ui.set_local_storage", text="Local Storagge")
+    row.operator("my_ui.load_local_storage", text="Load Local Storagge")
+
+    # row = layout.row()
+    # row.label(text="帧")
+    # row.label(text="状态")
+    # row.label(text="形态键值")
+    # row.label(text="文本")
+
+    row = layout.row()
+    row.prop(scene, "frame_start_", text = '起始')
+    row.prop(scene, "frame_end_", text = '结束')
+    row.operator("object.set_frame_range", text="更新帧范围")
 
     row = layout.row()
     row.template_list("OBJECT_UL_Lip_Sync_Sub", "my_list", scene, "my_list", scene, "my_list_index")
        
     col = row.column()
-    col.operator("my_list.new_item", icon='ADD', text="")
-    col.operator("my_list.delete_item", icon='REMOVE', text="")
-    col.separator()
+    # col.operator("my_list.new_item", icon='ADD', text="")
+    # col.operator("my_list.delete_item", icon='REMOVE', text="")
     col.operator("my_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("my_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
-
-    add_row_with_label(layout, '开始帧', scene, 'frame_start_', .2)
-    add_row_with_label(layout, '结束帧', scene, 'frame_end_', .2)
+    
     row = layout.row()
-    row.operator("object.set_frame_range", text="更新帧范围")
-    row.operator("my_ui.add_open", text="Add Open")
-    row.operator("my_ui.add_mid", text="Add Mid")
-    row.operator("my_ui.add_close", text="Add Close")
-    row.operator("my_ui.copy", text="Copy")
-
-    # layout.operator("my_ui.add_row", text="Add Row")
-    # Add 10 rows button
+    row.operator("my_ui.add_open", text="Add Open", icon = 'ADD')
+    row.operator("my_ui.add_close", text="Add Close", icon = 'ADD')
+    row.operator("my_ui.copy", text="Copy", icon = 'DUPLICATE')
+    row.operator("my_list.delete_item", text="删除", icon = 'X')
     layout.operator("my_ui.lip_sync", text="Lip Sync")
-    # Clear empty rows button
     # layout.operator("my_ui.clear_empty_rows", text="Clear Empty Rows")
-    layout.operator("my_ui.clear_rows", text="Clear Rows")
-    layout.operator("my_ui.set_local_storage", text="Local Storagge")
-    layout.operator("my_ui.load_local_storage", text="Load Local Storagge")
+    layout.operator("my_ui.clear_rows", text="Clear")

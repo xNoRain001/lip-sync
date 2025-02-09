@@ -1,7 +1,7 @@
 import json
 
 from ..libs.blender_utils import get_operator, get_utils, get_data
-from .crud import add_lip_sync
+from .lip_sync_crud import add_lip_sync
 from ..const import lip_sync_text_name
 
 class Load_Local_Storage (get_operator()):

@@ -1,5 +1,3 @@
-
-
 from ..libs.blender_utils import get_operator, get_context
 
 class Set_Frame_Range (get_operator()):
@@ -8,7 +6,7 @@ class Set_Frame_Range (get_operator()):
 
   def execute(self, context):
     scene = get_context().scene
-    scene.frame_start = context.scene.frame_start_
-    scene.frame_end = context.scene.frame_end_
+    scene.frame_start = scene.frame_start_
+    scene.frame_end = scene.frame_end_
 
     return {'FINISHED'}
