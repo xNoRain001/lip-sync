@@ -64,13 +64,13 @@ class Lip_Sync_Config (get_panel()):
     scene = context.scene
 
     # add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
-    add_row_with_label(layout, '节拍', scene, 'step', .2)
+    add_row_with_label(layout, '每一拍帧数', scene, 'step', .2)
     add_row_with_label(layout, '形态键', scene, 'lip_sync_shape_key', .2)
     # TODO: 下拉框选择形态键
     add_row_with_label(layout, '音素形态键', scene, 'shape_key_name', .2)
     add_row_with_label(layout, '打开默认值', scene, 'lip_sync_shape_key_value', .2)
     add_row_with_label(layout, '插值', scene, 'interpolation', .2)
-    add_row_with_label(layout, '闭口间隔', scene, 'min_frame', .2)
+    add_row_with_label(layout, '闭口帧数', scene, 'min_frame', .2)
     add_row_with_label(layout, '智能模式', scene, 'smart_mode', .2)
     add_row_with_label(layout, '打开一次', scene, 'type_1_shape_key_value', .2)
     row = layout.row()
@@ -130,8 +130,8 @@ class Lip_Sync (get_panel()):
     col.operator("lip_sync_list.move_item", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("lip_sync_list.move_item", icon='TRIA_DOWN', text="").direction = 'DOWN'
     col.operator("object.clear_rows", icon='TRASH', text="")
-    col.operator("object.set_local_storage", icon='FILE_TICK', text="")
-    col.operator("object.load_local_storage", icon='IMPORT', text="")
+    col.operator("object.set_local_storage", icon='FILE_TICK', text="").type = 'lip_sync'
+    col.operator("object.load_local_storage", icon='IMPORT', text="").type = 'lip_sync'
     
     row = layout.row()
     row.operator("object.add_open", text="Add Open", icon = 'ADD')

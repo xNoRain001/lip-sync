@@ -4,33 +4,23 @@ from ..libs.blender_utils import (
   get_props
 )
 
-def add_blink (
-  context, 
-  appearance = 0, 
-  disappearance = 0, 
-  eye_opening_time_2 = 36,
-  eye_closing_time_2 = 3,
-  eye_in_betweener_frame_time_2 = 3,
-  load = False
-):
+def add_blink (context):
   scene = context.scene
   blink_list = scene.blink_list
-  item = blink_list.add()
-  item.disappearance = disappearance
-  item.eye_opening_time_2 = eye_opening_time_2
-  item.eye_closing_time_2 = eye_closing_time_2
-  item.eye_in_betweener_frame_time_2 = eye_in_betweener_frame_time_2
+  eye_opening_time = scene.eye_opening_time
+  eye_closing_time = scene.eye_closing_time
+  eye_in_betweener_frame_time = scene.eye_in_betweener_frame_time
 
-  if load:
-    item.appearance = blink_list.appearance
-  else:
-    # 当原先本来就有数据时，起始帧在原先的基础上加上间隔
-    l = len(blink_list)
-    appearance = scene.frame_current
-    item.appearance = appearance
-    # 让新增加的被选中
-    scene.blink_list_index = l - 1
- 
+  item = blink_list.add()
+  item.appearance = scene.frame_current
+  item.disappearance = 0
+  item.eye_opening_time = eye_opening_time
+  item.eye_closing_time = eye_closing_time
+  item.eye_in_betweener_frame_time = eye_in_betweener_frame_time
+
+  l = len(blink_list)
+  scene.blink_list_index = l - 1
+
 def copy_blink (context):
   scene = context.scene
   blink_list = scene.blink_list
@@ -40,11 +30,11 @@ def copy_blink (context):
     item = blink_list.add()
     source = blink_list[blink_list_index]
 
-    item.appearance = source.disappearance
+    item.appearance = source.appearance
     item.disappearance = source.disappearance
-    item.eye_opening_time_2 = source.eye_opening_time_2
-    item.eye_closing_time_2 = source.eye_closing_time_2
-    item.eye_in_betweener_frame_time_2 = source.eye_in_betweener_frame_time_2
+    item.eye_opening_time = source.eye_opening_time
+    item.eye_closing_time = source.eye_closing_time
+    item.eye_in_betweener_frame_time = source.eye_in_betweener_frame_time
     # item.name = source.name
     # 移动到复制对象下方
     index = blink_list_index + 1
@@ -70,6 +60,9 @@ class Clear_Blink_Subs (get_operator()):
     blink_list.clear()
 
     return {'FINISHED'}
+  
+  def invoke(self, context, event):
+    return context.window_manager.invoke_confirm(self, event)
   
 class Clear_Empty_Blink_Subs (get_operator()):
   bl_idname = "object.clear_empty_blink_subs"

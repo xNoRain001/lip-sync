@@ -7,8 +7,6 @@ from ..libs.blender_utils import (
 
 def add_lip_sync (
   context, 
-  frame = None, 
-  text = '',
   open = True
 ):
   scene = context.scene
@@ -20,7 +18,7 @@ def add_lip_sync (
   l = len(lip_sync_list)
   frame = lip_sync_list[-2].frame + step if l > 1 else lip_sync_frame_start
   item.open = open
-  item.text = text
+  item.text = ''
   # 当原先本来就有数据时，起始帧在原先的基础上加上间隔
   item.frame = frame
   item.shape_key_value = get_shape_key_value(open, lip_sync_shape_key_value)
@@ -58,7 +56,7 @@ class Add_Open_Sub (get_operator()):
   bl_label = "Add Open"
 
   def execute(self, context):
-    add_lip_sync(context, open = True)
+    add_lip_sync(context, True)
 
     return {'FINISHED'}
   
@@ -67,7 +65,7 @@ class Add_Close_Sub (get_operator()):
   bl_label = "Add Close"
 
   def execute(self, context):
-    add_lip_sync(context, open = False)
+    add_lip_sync(context, False)
 
     return {'FINISHED'}
 

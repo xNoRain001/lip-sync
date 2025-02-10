@@ -17,10 +17,10 @@ class Blink_Sub_Var (get_property_group()):
   name: get_props().StringProperty(name="name")
   appearance: get_props().IntProperty(name="appearance")
   disappearance: get_props().IntProperty(name="disappearance")
-  eye_opening_time_2: get_props().IntProperty(name="eye_opening_time_2", default = 36)
-  eye_closing_time_2: get_props().IntProperty(name="eye_closing_time_2", default = 3)
-  eye_in_betweener_frame_time_2: get_props().IntProperty(name="eye_in_betweener_frame_time_2", default = 3)
-  blink_interpolation_2: get_props().EnumProperty(
+  eye_opening_time: get_props().IntProperty(name="eye_opening_time_2", default = 36)
+  eye_closing_time: get_props().IntProperty(name="eye_closing_time_2", default = 3)
+  eye_in_betweener_frame_time: get_props().IntProperty(name="eye_in_betweener_frame_time_2", default = 3)
+  blink_interpolation: get_props().EnumProperty(
     name="blink_interpolation_2",
     items = [
       ('bezier', "BEZIER", ""),
@@ -48,9 +48,9 @@ class Blink_Sub (get_ui_list()):
     row = layout.row()
     row.prop(item, "appearance", text="", emboss=False)
     row.prop(item, "disappearance", text="", emboss=False)
-    row.prop(item, "eye_opening_time_2", text="", emboss=False)
-    row.prop(item, "eye_closing_time_2", text="", emboss=False)
-    row.prop(item, "eye_in_betweener_frame_time_2", text="", emboss=False)
+    row.prop(item, "eye_opening_time", text="", emboss=False)
+    row.prop(item, "eye_closing_time", text="", emboss=False)
+    row.prop(item, "eye_in_betweener_frame_time", text="", emboss=False)
     row.prop(item, "name", text="", emboss=False)
 
 class Blink_Config (get_panel()):
@@ -70,6 +70,7 @@ class Blink_Config (get_panel()):
     add_row_with_label(layout, '闭眼时间', scene, 'eye_closing_time', .2)
     add_row_with_label(layout, '中割时间', scene, 'eye_in_betweener_frame_time', .2)
     add_row_with_label(layout, '眼睛形态键', scene, 'blink_shape_key_name', .2)
+    add_row_with_label(layout, '眉毛形态键', scene, 'blink_eyebrow_shape_key_name', .2)
 
 class Blink (get_panel()):
   bl_label = "Blink"
@@ -100,14 +101,17 @@ class Blink (get_panel()):
     col.separator()
     col.operator("object.move_blink_sub", icon='TRIA_UP', text="").direction = 'UP'
     col.operator("object.move_blink_sub", icon='TRIA_DOWN', text="").direction = 'DOWN'
+    col.operator("object.clear_blink_subs", icon='TRASH', text="")
+    col.operator("object.set_local_storage", icon='FILE_TICK', text="").type = 'blink'
+    col.operator("object.load_local_storage", icon='IMPORT', text="").type = 'blink'
+    
   
     row = layout.row()
     row.operator("object.add_blink_sub", text="Add Blink Sub", icon = 'ADD')
-    row.operator("object.delete_blink_sub", text="删除", icon = 'X')
     row.operator("object.copy_blink_sub", text="Copy Blink Sub", icon = 'DUPLICATE')
+    row.operator("object.delete_blink_sub", text="删除", icon = 'X')
     # layout.operator("object.add_row", text="Add Row")
     # Add 10 rows button
     layout.operator("object.blink", text="Blink")
     # Clear empty rows button
     # layout.operator("object.clear_empty_rows", text="Clear Empty Rows")
-    layout.operator("object.clear_blink_subs", text="Clear Blink Subs")

@@ -58,6 +58,7 @@ def before (self, lip_sync_list):
     self.report({'WARNING'}, f'存在重复的帧{ str(duplicates) }')
 
   # TODO: 严格模式，闭合时，值一定要为 0，打开时，值一定不为 0
+  # TODO: 检查 shape key 是否存在
 
   return passing
 
@@ -200,11 +201,11 @@ class Lip_Sync (get_operator()):
     lip_sync_list = scene.lip_sync_list
     shape_key_name = scene.shape_key_name
     lip_sync_shape_key = scene.lip_sync_shape_key
-    shape_keys = get_shape_keys(lip_sync_shape_key)
-    shape_key = shape_keys[shape_key_name]
     smart_mode = scene.smart_mode
     min_frame = scene.min_frame
     interpolation = scene.interpolation
+    shape_keys = get_shape_keys(lip_sync_shape_key)
+    shape_key = shape_keys[shape_key_name]
     passing = before(self, lip_sync_list)
 
     if passing:

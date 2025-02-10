@@ -4,10 +4,14 @@ bl_info = {
   "category": "Object",
 }
 
-import os
-
-from .libs.blender_utils import register as utils_register, unregister as utils_unregister
-from .panels import register as panels_register, unregister as panels_unregister
+from .libs.blender_utils import (
+  register as utils_register, 
+  unregister as utils_unregister
+)
+from .panels import (
+  register as panels_register, 
+  unregister as panels_unregister
+)
 from .operators import (
   register as operators_register, 
   unregister as operators_unregister

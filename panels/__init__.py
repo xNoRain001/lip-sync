@@ -1,4 +1,5 @@
 from .reload_addon import Reload_Addon
+from ..const import lip_sync_list_index, blink_list_index
 from ..libs.blender_utils import (
   register_classes, 
   unregister_classes, 
@@ -35,7 +36,7 @@ def register():
 
   # lip sync props
   add_scene_custom_prop('lip_sync_list', 'Collection', type = Lip_Sync_Sub_Vars)
-  add_scene_custom_prop('lip_sync_list_index', 'Int')
+  add_scene_custom_prop(lip_sync_list_index, 'Int')
   add_scene_custom_prop('interpolation', 'Enum', 'BEZIER', items = [
     # 标识符（Identifier）：用于在代码中引用该枚举项的字符串。
     # 名称（Name）：在用户界面中显示的字符串。
@@ -75,7 +76,7 @@ def register():
 
   # blink props
   add_scene_custom_prop('blink_list', 'Collection', type = Blink_Sub_Var)
-  add_scene_custom_prop('blink_list_index', 'Int')
+  add_scene_custom_prop(blink_list_index, 'Int')
   add_scene_custom_prop('blink_interpolation', 'Enum', 'BEZIER', items = [
     ('BEZIER', "BEZIER", ""),
     ('CONSTANT', "CONSTANT", ""),
@@ -86,6 +87,7 @@ def register():
   # 偏向闭眼，2/3 位置
   add_scene_custom_prop('eye_in_betweener_frame_time', 'Int', 3)
   add_scene_custom_prop('blink_shape_key_name', 'String', 'eye_blink')
+  add_scene_custom_prop('blink_eyebrow_shape_key_name', 'String', 'eyebrow_lower')
 
 def unregister():
   unregister_classes(classes)
