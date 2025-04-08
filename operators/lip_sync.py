@@ -214,7 +214,7 @@ class Lip_Sync (get_operator()):
       
       keyframe_insert(lip_sync_list, shape_key)
 
-      _shape_keys = get_data().shape_keys.get('Key')
+      _shape_keys = get_data().shape_keys.get(lip_sync_shape_key)
       close_index_list = get_close_index_list(lip_sync_list, min_frame)
       set_constant(close_index_list, _shape_keys, shape_key_name, interpolation)
 

@@ -9,8 +9,11 @@ from ..libs.blender_utils import (
   get_property_group,
   get_props,
   get_utils,
-  get_ui_list
+  get_ui_list,
+  get_data
 )
+
+from ..const import bl_category
 
 def get_shape_key_value (open, lip_sync_shape_key_value):
   shape_key_value = lip_sync_shape_key_value if open else 0
@@ -52,56 +55,85 @@ class Lip_Sync_Sub (get_ui_list()):
     row.prop(item, "shape_key_value", **common)
     row.prop(item, "text", **common)
 
+import bpy
 class Lip_Sync_Config (get_panel()):
   bl_label = "Lip Sync Config"
   bl_idname = "OBJECT_PT_Lip_Config"
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
-  bl_category = 'Item'
+  bl_category = bl_category
 
   def draw(self, context):
     layout = self.layout
     scene = context.scene
+    box = layout.box()
 
-    # add_row_with_label(layout, '起始', scene, 'lip_sync_frame_start', .2)
-    add_row_with_label(layout, '每一拍帧数', scene, 'step', .2)
-    add_row_with_label(layout, '形态键', scene, 'lip_sync_shape_key', .2)
-    # TODO: 下拉框选择形态键
-    add_row_with_label(layout, '音素形态键', scene, 'shape_key_name', .2)
-    add_row_with_label(layout, '打开默认值', scene, 'lip_sync_shape_key_value', .2)
-    add_row_with_label(layout, '插值', scene, 'interpolation', .2)
-    add_row_with_label(layout, '闭口帧数', scene, 'min_frame', .2)
-    add_row_with_label(layout, '智能模式', scene, 'smart_mode', .2)
-    add_row_with_label(layout, '打开一次', scene, 'type_1_shape_key_value', .2)
-    row = layout.row()
+    row = box.row()
+    row.label(text = '每一拍帧数')
+    row.prop(scene, 'step', text = '')
+
+    data = get_data()
+    row = box.row()
+    row.label(text = '形态键')
+    row.prop_search(scene, 'lip_sync_shape_key', data, 'shape_keys', text = '')
+
+    lip_sync_shape_key = scene.lip_sync_shape_key
+
+    if lip_sync_shape_key:
+      row = box.row()
+      row.label(text = '音素形态键')
+      row.prop_search(
+        scene, 
+        'shape_key_name', 
+        data.shape_keys[lip_sync_shape_key], 
+        'key_blocks', 
+        text = ''
+      )
+
+    row = box.row()
+    row.label(text = '打开默认值')
+    row.prop(scene, 'lip_sync_shape_key_value', text = '')
+    row = box.row()
+    row.label(text = '插值')
+    row.prop(scene, 'interpolation', text = '')
+    row = box.row()
+    row.label(text = '闭口帧数')
+    row.prop(scene, 'min_frame', text = '')
+    row = box.row()
+    row.label(text = '智能模式')
+    row.prop(scene, 'smart_mode', text = '')
+    row = box.row()
+    row.label(text = '打开一次')
+    row.prop(scene, 'type_1_shape_key_value', text = '')
+    row = box.row()
     row.label(text = '打开两次')
-    row.prop(scene, "type_2_shape_key_value", text = '')
-    row.prop(scene, "type_2_shape_key_value_2", text = '')
-    row = layout.row()
+    row.prop(scene, 'type_2_shape_key_value', text = '')
+    row.prop(scene, 'type_2_shape_key_value_2', text = '')
+    row = box.row()
     row.label(text = '打开三次')
-    row.prop(scene, "type_3_shape_key_value", text = '')
-    row.prop(scene, "type_3_shape_key_value_2", text = '')
-    row.prop(scene, "type_3_shape_key_value_3", text = '')
-    row = layout.row()
+    row.prop(scene, 'type_3_shape_key_value', text = '')
+    row.prop(scene, 'type_3_shape_key_value_2', text = '')
+    row.prop(scene, 'type_3_shape_key_value_3', text = '')
+    row = box.row()
     row.label(text = '打开四次')
-    row.prop(scene, "type_4_shape_key_value", text = '')
-    row.prop(scene, "type_4_shape_key_value_2", text = '')
-    row.prop(scene, "type_4_shape_key_value_3", text = '')
-    row.prop(scene, "type_4_shape_key_value_4", text = '')
-    row = layout.row()
+    row.prop(scene, 'type_4_shape_key_value', text = '')
+    row.prop(scene, 'type_4_shape_key_value_2', text = '')
+    row.prop(scene, 'type_4_shape_key_value_3', text = '')
+    row.prop(scene, 'type_4_shape_key_value_4', text = '')
+    row = box.row()
     row.label(text = '打开五次')
-    row.prop(scene, "type_5_shape_key_value", text = '')
-    row.prop(scene, "type_5_shape_key_value_2", text = '')
-    row.prop(scene, "type_5_shape_key_value_3", text = '')
-    row.prop(scene, "type_5_shape_key_value_4", text = '')
-    row.prop(scene, "type_5_shape_key_value_5", text = '')
+    row.prop(scene, 'type_5_shape_key_value', text = '')
+    row.prop(scene, 'type_5_shape_key_value_2', text = '')
+    row.prop(scene, 'type_5_shape_key_value_3', text = '')
+    row.prop(scene, 'type_5_shape_key_value_4', text = '')
+    row.prop(scene, 'type_5_shape_key_value_5', text = '')
   
 class Lip_Sync (get_panel()):
   bl_label = "Lip Sync"
   bl_idname = "OBJECT_PT_Lip_Sync"
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
-  bl_category = 'Item'
+  bl_category = bl_category
 
   def draw(self, context):
     layout = self.layout

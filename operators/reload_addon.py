@@ -1,9 +1,8 @@
 import sys
 from ..libs.blender_utils import get_operator, get_ops
 
-# Debug
-class Reload_Addon (get_operator()):
-  bl_idname = "object.reload_addon"
+class OBJECT_OT_reload_addon (get_operator()):
+  bl_idname = "object.reload_lip_sync_addon"
   bl_label = "Reload Addon"
 
   def execute(self, context):

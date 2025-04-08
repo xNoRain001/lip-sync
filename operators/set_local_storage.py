@@ -1,9 +1,8 @@
 import json
 
 from ..libs.blender_utils import get_operator, get_utils, get_data, get_props
-from ..const import lip_sync_text_name, blink_text_name, lip_sync_list_index, blink_list_index
+from ..const import lip_sync_text_name, lip_sync_list_index
 from ..panels.lip_sync import Lip_Sync_Sub_Vars
-from ..panels.blink import Blink_Sub_Var
 
 def get_info (type, context):
   list = None
@@ -16,11 +15,6 @@ def get_info (type, context):
     list = scene.lip_sync_list
     text_name = lip_sync_text_name
     index_name = lip_sync_list_index
-  else:
-    vars = Blink_Sub_Var
-    list = scene.blink_list
-    text_name = blink_text_name
-    index_name = blink_list_index
 
   # python 3.6(+) 返回的列表中元素的顺序和定义时保持一致
   custom_props = vars.__annotations__.keys()

@@ -1,9 +1,8 @@
 import json
 
 from ..libs.blender_utils import get_operator, get_utils, get_data, get_props, report_warning, report_info
-from ..const import lip_sync_text_name, blink_text_name
+from ..const import lip_sync_text_name
 from ..panels.lip_sync import Lip_Sync_Sub_Vars
-from ..panels.blink import Blink_Sub_Var
 from .set_local_storage import get_info
 
 def get_text (text_name):
