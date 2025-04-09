@@ -5,7 +5,7 @@ from ..operators import OBJECT_OT_blink
 
 class VIEW3D_PT_blink (get_panel()):
   bl_region_type = 'UI'
-  bl_label = 'Blink Config'
+  bl_label = 'Blink'
   bl_space_type = 'VIEW_3D'
   bl_category = bl_category
   bl_idname = "VIEW3D_PT_blink_config"
@@ -16,26 +16,17 @@ class VIEW3D_PT_blink (get_panel()):
     box = layout.box()
 
     row = box.row()
-    row.label(text = '插值')
-    row.prop(scene, 'blink_interpolation', text = '')
+    row.label(text = '类型')
+    row.prop(scene, 'blink_type', text = '')
     row = box.row()
-    row.label(text = '眨眼间隔')
-    row.prop(scene, 'eye_step', text = '')
+    row.label(text = '眨眼频率')
+    row.prop(scene, 'blink_frequency', text = '')
     row = box.row()
-    row.label(text = '闭眼时间')
-    row.prop(scene, 'eye_closing_time', text = '')
+    row.label(text = '起始帧')
+    row.prop(scene, 'blink_frame_start', text = '')
     row = box.row()
-    row.label(text = '中割时间')
-    row.prop(scene, 'eye_in_betweener_frame_time', text = '')
-    row = box.row()
-    row.label(text = '睁眼时间')
-    row.prop(scene, 'eye_opening_time', text = '')
-    row = box.row()
-    row.label(text = '出现')
-    row.prop(scene, 'appearance', text = '')
-    row = box.row()
-    row.label(text = '消失')
-    row.prop(scene, 'disappearance', text = '')
+    row.label(text = '结束帧')
+    row.prop(scene, 'blink_frame_end', text = '')
     data = get_data()
     row = box.row()
     row.label(text = '形态键')
@@ -45,7 +36,7 @@ class VIEW3D_PT_blink (get_panel()):
 
     if blink_shape_key:
       row = box.row()
-      row.label(text = '眨眼形态键')
+      row.label(text = '活动形态键')
       row.prop_search(
         scene, 
         'blink_key_block', 
